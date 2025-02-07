@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: "2022bcd0033_web"
+    container_name: "flask_web"
+    ports:
+      - "5000:5000"   # Maps container port 5000 to host
+    depends_on:
+      - db           # Ensures the database starts first
+    environment:
+      DB_HOST: db     # Reference the database service by name
+      DB_NAME: mydb
+      DB_USER: user
+      DB_PASS: password
+
+  db:
+    image: postgres:latest
+    container_name: "flask_db"
+    restart: always
+    environment:
+      POSTGRES_DB: mydb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"      # Exposes PostgreSQL
+    volumes:
+      - db_data:/var/lib/postgresql/data       # Persists database data 
+
+volumes:
+  db_data:        # Persistent storage for PostgreSQL
